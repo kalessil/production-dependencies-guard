@@ -32,7 +32,7 @@ final class Guard implements ComposerPluginContract, EventSubscriberContract
         $manifest   = json_decode(file_get_contents(\Composer\Factory::getComposerFile()), true);
         $violations = array_filter(array_keys($manifest['require'] ?? []), [$this->repository, 'contains']);
         if ($violations !== []) {
-            $message = sprintf('Following dev-dependencies has been found in require-section: %s', implode(', ', $violations));
+            $message = sprintf('Following dev-dependencies have been found in require-section: %s', implode(', ', $violations));
             trigger_error($message, E_USER_ERROR);
         }
     }
