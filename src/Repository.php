@@ -54,6 +54,7 @@ final class Repository
         'doctrine/coding-standard',
         'zendframework/zend-coding-standard',
         'yiisoft/yii2-coding-standards',
+        'wp-coding-standards/wpcs',
         'phpcompatibility/php-compatibility',
         'phpmd/phpmd',
         'pdepend/pdepend',
