@@ -45,9 +45,8 @@ final class Repository
         'mikey179/vfsStream',
         'phing/phing',
 
-        'friendsofphp/php-cs-fixer',
-
         /* SCA and code quality tools */
+        'friendsofphp/php-cs-fixer',
         'vimeo/psalm',
         'jakub-onderka/php-parallel-lint',
         'squizlabs/php_codesniffer',
