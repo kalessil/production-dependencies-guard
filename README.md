@@ -1,6 +1,6 @@
 # production-dependencies-guard
 
-Prevents development packages from getting into production environment. In practical field 
+Prevents development packages from being added into `require` and getting into production environment. In practical field 
 prevents e.g. debug tool-bars deployment into production environments (and similar cases).
 
 > Note: use `composer install --no-dev` to install only production dependencies
