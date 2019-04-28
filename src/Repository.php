@@ -52,6 +52,8 @@ final class Repository
         'squizlabs/php_codesniffer',
         'slevomat/coding-standard',
         'doctrine/coding-standard',
+        'zendframework/zend-coding-standard',
+        'yiisoft/yii2-coding-standards',
         'phpcompatibility/php-compatibility',
         'phpmd/phpmd',
         'pdepend/pdepend',
