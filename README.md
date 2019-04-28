@@ -3,6 +3,8 @@
 Prevents development packages from getting into production environment. In practical field 
 prevents e.g. debug tool-bars deployment into production environments (and similar cases).
 
+> Note: normally `composer install --no-dev` installing the production dependencies
+
 # Installation
 
 `composer require --dev kalessil/production-dependencies-guard:dev-master`
@@ -10,7 +12,7 @@ prevents e.g. debug tool-bars deployment into production environments (and simil
 # Usage
 
 When the package is added to require-dev section of your `composer.json` file (`"kalessil/production-dependencies-guard": "dev-master"`),
-it'll prevent adding development packages into `require` section. Since development packages has no security guaranties, this also 
+it'll **prevent adding dev-packages into `require` section**. Since dev-packages has no security guaranties, this also 
 improves your application security.
 
 ```
