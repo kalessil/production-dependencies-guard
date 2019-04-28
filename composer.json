@@ -1,7 +1,6 @@
 {
     "name":   "kalessil/production-dependencies-guard",
     "type":   "composer-plugin",
-    "version":"0.0.3",
     "require": {
         "php":                 "^7.1",
         "ext-json":            "*",
