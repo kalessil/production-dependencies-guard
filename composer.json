@@ -1,0 +1,10 @@
+{
+    "name":   "kalessil/production-dependencies-guard",
+    "type":   "composer-plugin",
+    "require": {
+        "composer-plugin-api": "^1.1"
+    },
+    "extra": {
+        "class": "Kalessil\\Composer\\Plugins\\ProductionDependenciesGuard\\Guard"
+    }
+}
