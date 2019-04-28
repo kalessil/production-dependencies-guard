@@ -18,7 +18,7 @@ final class Guard implements ComposerPluginContract, EventSubscriberContract
         $this->repository = new Repository();
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return array(
             ScriptEvents::POST_INSTALL_CMD => array('check'),
@@ -26,7 +26,7 @@ final class Guard implements ComposerPluginContract, EventSubscriberContract
         );
     }
 
-    public function check() {
+    public function check(): void {
         $manifest   = json_decode(file_get_contents(\Composer\Factory::getComposerFile()), true);
         $violations = array_filter(array_keys($manifest['require'] ?? []), [$this->repository, 'contains']);
         if ($violations !== []) {

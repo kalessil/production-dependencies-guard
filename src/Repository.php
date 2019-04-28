@@ -4,14 +4,15 @@ namespace Kalessil\Composer\Plugins\ProductionDependenciesGuard;
 
 final class Repository
 {
-    private $vendors  = [
+    private static $vendors  = [
         'phpunit/',
         'codeception/',
         'behat/',
-        'phpspec/'
+        'phpspec/',
+        'phpstan/',
     ];
 
-    private $packages = [
+    private static $packages = [
         'kalessil/production-dependencies-guard',
         'roave/security-advisories',
 
@@ -21,6 +22,7 @@ final class Repository
         'mybuilder/phpunit-accelerator',
         'codedungeon/phpunit-result-printer',
         'spatie/phpunit-watcher',
+        'satooshi/php-coveralls',
         
         /* Frameworks components and tooling */
         'symfony/phpunit-bridge',
@@ -33,22 +35,41 @@ final class Repository
         'yiisoft/yii2-debug',
         'orchestra/testbench',
         'barryvdh/laravel-debugbar',
+        'filp/whoops',
+        'fzaninotto/faker',
 
-        /* more dev-packages  */
+        /* dev-tools */
         'humbug/humbug',
         'infection/infection',
         'mockery/mockery',
-        'satooshi/php-coveralls',
         'mikey179/vfsStream',
-        'filp/whoops',
+        'phing/phing',
+
+        'friendsofphp/php-cs-fixer',
+
+        /* SCA and code quality tools */
+        'vimeo/psalm',
+        'jakub-onderka/php-parallel-lint',
+        'squizlabs/php_codesniffer',
+        'slevomat/coding-standard',
+        'doctrine/coding-standard',
+        'phpcompatibility/php-compatibility',
+        'phpmd/phpmd',
+        'pdepend/pdepend',
+        'sebastian/phpcpd',
+        'povils/phpmnd',
+        'phan/phan',
+        'phpro/grumphp',
+        'wimg/php-compatibility',
+        'sstalle/php7cc',
     ];
 
-    private function containsVendor(string $dependency): bool {
+    private function containsByVendor(string $dependency): bool {
         $callback = static function (string $vendor) use ($dependency): bool { return stripos($dependency, $vendor) === 0; };
-        return array_filter($this->vendors, $callback) === [];
+        return array_filter(self::$vendors, $callback) !== [];
     }
 
     public function contains(string $dependency): bool {
-        return \in_array(strtolower($dependency), $this->packages, true) || $this->containsVendor($dependency);
+        return \in_array(strtolower($dependency), self::$packages, true) || $this->containsByVendor($dependency);
     }
 }
