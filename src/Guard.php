@@ -21,8 +21,10 @@ final class Guard implements ComposerPluginContract, EventSubscriberContract
     public static function getSubscribedEvents(): array
     {
         return array(
+            ScriptEvents::PRE_INSTALL_CMD  => array('check'),
             ScriptEvents::POST_INSTALL_CMD => array('check'),
-            ScriptEvents::POST_UPDATE_CMD => array('check'),
+            ScriptEvents::PRE_UPDATE_CMD   => array('check'),
+            ScriptEvents::POST_UPDATE_CMD  => array('check'),
         );
     }
 
