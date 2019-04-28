@@ -3,7 +3,7 @@
 Prevents development packages from getting into production environment. In practical field 
 prevents e.g. debug tool-bars deployment into production environments (and similar cases).
 
-> Note: normally `composer install --no-dev` installing the production dependencies
+> Note: use `composer install --no-dev` to install only production dependencies
 
 # Installation
 
