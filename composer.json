@@ -1,8 +1,16 @@
 {
     "name":   "kalessil/production-dependencies-guard",
     "type":   "composer-plugin",
+    "version":"0.0.3",
     "require": {
+        "php":                 "^7.1",
+        "ext-json":            "*",
         "composer-plugin-api": "^1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kalessil\\Composer\\Plugins\\ProductionDependenciesGuard\\": "src/"
+        }
     },
     "extra": {
         "class": "Kalessil\\Composer\\Plugins\\ProductionDependenciesGuard\\Guard"
