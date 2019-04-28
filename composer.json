@@ -1,8 +1,15 @@
 {
-    "name":   "kalessil/production-dependencies-guard",
-    "type":   "composer-plugin",
+    "name":        "kalessil/production-dependencies-guard",
+    "type":        "composer-plugin",
+    "description": "Prevents installation of development packages, placed in require-section (should be require-dev).",
+    "license":     "MIT",
+    "authors":     [{
+            "name":  "Vladimir Reznichenko",
+            "email": "kalessil@gmail.com",
+            "role":  "maintainer"
+    }],
     "require": {
-        "php":                 "^7.1",
+        "php":                 "^7.0",
         "ext-json":            "*",
         "composer-plugin-api": "^1.1"
     },

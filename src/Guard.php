@@ -26,7 +26,7 @@ final class Guard implements ComposerPluginContract, EventSubscriberContract
         );
     }
 
-    public function check(): void {
+    public function check() {
         $manifest   = json_decode(file_get_contents(\Composer\Factory::getComposerFile()), true);
         $violations = array_filter(array_keys($manifest['require'] ?? []), [$this->repository, 'contains']);
         if ($violations !== []) {
