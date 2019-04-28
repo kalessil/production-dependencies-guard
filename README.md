@@ -22,7 +22,7 @@ composer require phpunit/phpunit:*
 # it should be `composer require --dev phpunit/phpunit:*` here
 ```
 
-will trigger failed installation:
+will run with an error (profit!):
 
 ```
 ./composer.json has been updated
