@@ -40,6 +40,7 @@ final class Repository
         'beyondcode/laravel-dump-server',
         'wnx/laravel-stats',
         'insolita/yii2-codestat',
+        'nunomaduro/larastan',
 
         /* dev-tools */
         'humbug/humbug',
