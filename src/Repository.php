@@ -36,7 +36,10 @@ final class Repository
         'orchestra/testbench',
         'barryvdh/laravel-debugbar',
         'filp/whoops',
-        'fzaninotto/faker',
+        'nunomaduro/collision',
+        'beyondcode/laravel-dump-server',
+        'wnx/laravel-stats',
+        'insolita/yii2-codestat',
 
         /* dev-tools */
         'humbug/humbug',
@@ -64,6 +67,7 @@ final class Repository
         'phpro/grumphp',
         'wimg/php-compatibility',
         'sstalle/php7cc',
+        'phploc/phploc',
     ];
 
     private function containsByVendor(string $dependency): bool {
