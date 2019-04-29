@@ -60,6 +60,7 @@ final class Repository
         'yiisoft/yii2-coding-standards',
         'wp-coding-standards/wpcs',
         'phpcompatibility/php-compatibility',
+        'consistence/coding-standard',
         'phpmd/phpmd',
         'pdepend/pdepend',
         'sebastian/phpcpd',
