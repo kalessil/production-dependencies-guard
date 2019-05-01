@@ -1,0 +1,7 @@
+.vagrant
+vendor
+Vagrantfile
+*.log
+*.phar
+/*.lock
+build

@@ -1,0 +1,5 @@
+{
+    "require": {
+        "kalessil/production-dependencies-guard-manifest": "*"
+    }
+}

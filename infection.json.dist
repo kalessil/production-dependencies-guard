@@ -1,0 +1,17 @@
+{
+    "source": {
+        "directories": [
+            "src"
+        ]
+    },
+    "mutators": {
+        "@default":             true,
+        "NotIdenticalNotEqual": false,
+        "IdenticalEqual":       false,
+        "TrueValue":            false,
+        "FalseValue":           false
+    },
+    "logs": {
+        "text": "./build/infection.log"
+    }
+}

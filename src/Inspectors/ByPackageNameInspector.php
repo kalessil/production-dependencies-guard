@@ -1,10 +1,13 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace Kalessil\Composer\Plugins\ProductionDependenciesGuard;
+namespace Kalessil\Composer\Plugins\ProductionDependenciesGuard\Inspectors;
 
-final class Repository
+use Composer\Package\CompletePackageInterface;
+use Kalessil\Composer\Plugins\ProductionDependenciesGuard\Inspectors\InspectorInterface as InspectorContract;
+
+final class ByPackageNameInspector implements InspectorContract
 {
-    private static $vendors  = [
+    private static $vendors = [
         'phpunit/',
         'codeception/',
         'behat/',
@@ -23,7 +26,7 @@ final class Repository
         'codedungeon/phpunit-result-printer',
         'spatie/phpunit-watcher',
         'satooshi/php-coveralls',
-        
+
         /* Frameworks components and tooling */
         'symfony/phpunit-bridge',
         'symfony/debug',
@@ -72,12 +75,19 @@ final class Repository
         'phploc/phploc',
     ];
 
-    private function containsByVendor(string $dependency): bool {
+    private function containsByVendor(string $dependency): bool
+    {
         $callback = static function (string $vendor) use ($dependency): bool { return stripos($dependency, $vendor) === 0; };
         return array_filter(self::$vendors, $callback) !== [];
     }
 
-    public function contains(string $dependency): bool {
-        return \in_array(strtolower($dependency), self::$packages, true) || $this->containsByVendor($dependency);
+    private function contains(string $dependency): bool
+    {
+        return \in_array(strtolower($dependency), self::$packages, true);
+    }
+
+    public function canUse(CompletePackageInterface $package): bool
+    {
+        return ! $this->contains($packageName = $package->getName()) && ! $this->containsByVendor($packageName);
     }
 }

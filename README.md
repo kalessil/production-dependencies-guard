@@ -3,9 +3,30 @@
 Prevents development packages from being added into `require` and getting into production environment. In practical field 
 prevents e.g. debug tool-bars deployment into production environments (and similar cases).
 
+Additionally, you can configure the guard to check missing license, abandoned package and enable deeper lock-file and 
+descriptions analysis.
+
 # Installation
 
 `composer require --dev kalessil/production-dependencies-guard:dev-master`
+
+# Configuration
+
+Also, additional guard checks can enabled in composer.json file:
+```
+{
+    "name": "...",
+
+    "extra": {
+        "production-dependencies-guard": ["check-lock-file", "check-description", "check-license", "check-abandoned"]
+    }
+}
+```
+
+- `check-lock-file` uses composer.lock instead of composer.json, allowing transitive dependencies analysis
+- `check-description` enables description and keywords analysis, allowing to detect custom dev-packages (should contain `debug` in keywords)
+- `check-license` enables license checking (should be specified)
+- `check-abandoned` enables abandoned packages checking (should non be used)
 
 # Usage
 
@@ -27,8 +48,9 @@ will run with an error (profit!):
 
 Installation failed, reverting ./composer.json to its original content.
 
-  [ErrorException]
-  Following dev-dependencies has been found in require-section: phpunit/phpunit
+[RuntimeException]                                                                   
+  Dependencies guard has found violations in require-dependencies (source: manifest):  
+   - phpunit/phpunit: dev-package-name
 ```
 
 # Stability

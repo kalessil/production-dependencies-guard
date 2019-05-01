@@ -1,7 +1,7 @@
 {
     "name":        "kalessil/production-dependencies-guard",
     "type":        "composer-plugin",
-    "description": "Prevents installation of development packages, placed in require-section (should be require-dev).",
+    "description": "Prevents adding of development packages into require-section (should be require-dev).",
     "license":     "MIT",
     "authors":     [{
             "name":  "Vladimir Reznichenko",
@@ -13,12 +13,28 @@
         "ext-json":            "*",
         "composer-plugin-api": "^1.1"
     },
+    "require-dev": {
+        "composer/composer":   "^1.8",
+        "phpunit/phpunit":     "^6.5",
+        "infection/infection": "^0.9"
+    },
     "autoload": {
         "psr-4": {
-            "Kalessil\\Composer\\Plugins\\ProductionDependenciesGuard\\": "src/"
+            "Kalessil\\Composer\\Plugins\\ProductionDependenciesGuard\\": ["src/"]
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Kalessil\\Composer\\Plugins\\ProductionDependenciesGuard\\": ["src/", "tests/"]
         }
     },
     "extra": {
         "class": "Kalessil\\Composer\\Plugins\\ProductionDependenciesGuard\\Guard"
+    },
+    "scripts": {
+        "test": [
+            "./vendor/bin/phpunit",
+            "./vendor/bin/infection --only-covered --min-msi=100 --quiet"
+        ]
     }
 }

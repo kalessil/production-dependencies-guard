@@ -1,0 +1,10 @@
+{
+    "require": {
+        "phpunit/phpunit":   "*",
+        "kalessil/kalessil": "*"
+    },
+
+    "extra": {
+        "production-dependencies-guard": []
+    }
+}

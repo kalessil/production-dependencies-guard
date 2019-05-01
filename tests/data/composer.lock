@@ -1,0 +1,5 @@
+{
+    "packages": [{
+        "name": "kalessil/production-dependencies-guard-lock"
+     }]
+}
