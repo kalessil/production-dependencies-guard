@@ -3,8 +3,8 @@
 Prevents development packages from being added into `require` and getting into production environment. In practical field 
 prevents e.g. debug tool-bars deployment into production environments (and similar cases).
 
-Additionally, you can configure the guard to check missing license, abandoned package and enable deeper lock-file and 
-descriptions analysis.
+Additionally, you can configure the guard to decline packages with missing license, abandoned or mentioning `debug` in description
+and analyze packages on basis of composer.lock (more precise analysis).
 
 # Installation
 
@@ -12,7 +12,7 @@ descriptions analysis.
 
 # Configuration
 
-Also, additional guard checks can enabled in composer.json file:
+Additional guard checks can enabled in composer.json file:
 ```
 {
     "name": "...",
@@ -23,10 +23,10 @@ Also, additional guard checks can enabled in composer.json file:
 }
 ```
 
-- `check-lock-file` uses composer.lock instead of composer.json, allowing transitive dependencies analysis
+- `check-lock-file` uses composer.lock instead of composer.json, allowing deeper dependencies analysis
 - `check-description` enables description and keywords analysis, allowing to detect custom dev-packages (should contain `debug` in keywords)
 - `check-license` enables license checking (should be specified)
-- `check-abandoned` enables abandoned packages checking (should non be used)
+- `check-abandoned` enables abandoned packages checking (should not be used)
 
 # Usage
 
