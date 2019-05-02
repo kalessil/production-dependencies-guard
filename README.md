@@ -18,7 +18,15 @@ Additional guard checks can enabled in composer.json file:
     "name": "...",
 
     "extra": {
-        "production-dependencies-guard": ["check-lock-file", "check-description", "check-license", "check-abandoned"]
+        "production-dependencies-guard": [
+            "check-lock-file",
+            "check-description",
+            "check-license",
+            "check-abandoned",
+            
+            "white-list:vendor/package-one",
+            "white-list:vendor/package-two"
+        ]
     }
 }
 ```
@@ -27,6 +35,7 @@ Additional guard checks can enabled in composer.json file:
 - `check-description` enables description and keywords analysis, allowing to detect custom dev-packages (should contain `debug` in keywords)
 - `check-license` enables license checking (should be specified)
 - `check-abandoned` enables abandoned packages checking (should not be used)
+- `white-list:...` adds a package to white-list, so it's not getting reported in spite of violations
 
 # Usage
 
