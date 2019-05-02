@@ -10,14 +10,16 @@
             "role":  "maintainer"
     }],
     "require": {
-        "php":                 "^7.0",
-        "ext-json":            "*",
-        "composer-plugin-api": "^1.1"
+        "php":                            "^7.0",
+        "ext-json":                       "*",
+        "composer-plugin-api":            "^1.1"
     },
     "require-dev": {
-        "composer/composer":   "^1.8",
-        "phpunit/phpunit":     "^6.5",
-        "infection/infection": "^0.9"
+        "ext-xdebug":                     "*",
+        "composer/composer":              "^1.8",
+        "phpunit/phpunit":                "^6.5",
+        "infection/infection":            "^0.9",
+        "rregeer/phpunit-coverage-check": "^0.1"
     },
     "autoload": {
         "psr-4": {
@@ -34,7 +36,8 @@
     },
     "scripts": {
         "test": [
-            "./vendor/bin/phpunit",
+            "./vendor/bin/phpunit --coverage-html ./build --coverage-clover ./build/phpunit.clover.xml",
+            "./vendor/bin/coverage-check ./build/phpunit.clover.xml 100",
             "./vendor/bin/infection --only-covered --min-msi=100 --quiet"
         ]
     }

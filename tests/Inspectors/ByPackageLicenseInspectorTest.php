@@ -14,14 +14,17 @@ final class ByPackageLicenseInspectorTest extends TestCase
         $mock->expects($this->atLeastOnce())->method('getLicense')->willReturn(...[
             '',
             [],
-            'license',
-            ['license', 'license']
+            'MIT',
+            ['mit', 'apache'],
+            ['mit', 'proprietary', 'apache'],
         ]);
 
-        $component = new ByPackageLicenseInspector();
+        $component = new ByPackageLicenseInspector(['accept-license:mit', 'accept-license:apache']);
+
         $this->assertFalse($component->canUse($mock));
         $this->assertFalse($component->canUse($mock));
         $this->assertTrue($component->canUse($mock));
         $this->assertTrue($component->canUse($mock));
+        $this->assertFalse($component->canUse($mock));
     }
 }

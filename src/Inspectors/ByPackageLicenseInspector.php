@@ -7,8 +7,28 @@ use Kalessil\Composer\Plugins\ProductionDependenciesGuard\Inspectors\InspectorIn
 
 final class ByPackageLicenseInspector implements InspectorContract
 {
+    /** @var array<int,string> */
+    private $allowed;
+
+    public function __construct(array $settings)
+    {
+        $this->allowed = array_map(
+            static function (string $setting): string { return str_replace('accept-license:', '', $setting); },
+            array_filter(
+                array_map('strtolower', array_map('trim', $settings)),
+                static function (string $setting): bool { return strncmp($setting, 'accept-license:', 15) === 0; }
+            )
+        );
+    }
+
     public function canUse(CompletePackageInterface $package): bool
     {
-        return ! empty($package->getLicense());
+        $hasLicense = ! empty($package->getLicense());
+        if ($hasLicense && $this->allowed !== []) {
+            $unfit = array_diff(array_map('strtolower', array_map('trim', (array) $package->getLicense())), $this->allowed);
+            return $unfit === [];
+        }
+
+        return $hasLicense;
     }
 }

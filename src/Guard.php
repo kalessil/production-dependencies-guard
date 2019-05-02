@@ -45,9 +45,9 @@ final class Guard implements ComposerPluginContract, EventSubscriberContract
         $this->inspectors = [
             'dev-package-name'     => new ByPackageNameInspector(),
             'dev-package-type'     => new ByPackageTypeInspector(),
-            'missing-license'      => $checkLicense     ? new ByPackageLicenseInspector()     : new StubInspector(),
-            'abandoned'            => $checkAbandoned   ? new ByPackageAbandonedInspector()   : new StubInspector(),
-            'description-keywords' => $checkDescription ? new ByPackageDescriptionInspector() : new StubInspector(),
+            'missing-license'      => $checkLicense     ? new ByPackageLicenseInspector($settings) : new StubInspector(),
+            'abandoned'            => $checkAbandoned   ? new ByPackageAbandonedInspector()        : new StubInspector(),
+            'description-keywords' => $checkDescription ? new ByPackageDescriptionInspector()      : new StubInspector(),
         ];
 
         $this->composer    = $composer;
