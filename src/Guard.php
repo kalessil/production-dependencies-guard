@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Kalessil\Composer\Plugins\ProductionDependenciesGuard;
 
@@ -18,7 +18,7 @@ use Kalessil\Composer\Plugins\ProductionDependenciesGuard\Inspectors\StubInspect
 use Kalessil\Composer\Plugins\ProductionDependenciesGuard\Suppliers\FromComposerLockSupplier;
 use Kalessil\Composer\Plugins\ProductionDependenciesGuard\Suppliers\FromComposerManifestSupplier;
 
-class Guard implements ComposerPluginContract, EventSubscriberContract
+final class Guard implements ComposerPluginContract, EventSubscriberContract
 {
     const CHECK_LOCK_FILE    = 'check-lock-file';
     const CHECK_DESCRIPTION  = 'check-description';
@@ -31,6 +31,8 @@ class Guard implements ComposerPluginContract, EventSubscriberContract
     private $composer;
     /** @var array<string,InspectorContract> */
     private $inspectors;
+    /** @var Whitelist */
+    private $whitelist;
 
     public function activate(Composer $composer, IOInterface $io)
     {
@@ -49,6 +51,7 @@ class Guard implements ComposerPluginContract, EventSubscriberContract
         ];
 
         $this->composer    = $composer;
+        $this->whitelist   = new Whitelist($settings);
         $this->useLockFile = \in_array(self::CHECK_LOCK_FILE, $settings, true);
     }
 
@@ -87,8 +90,13 @@ class Guard implements ComposerPluginContract, EventSubscriberContract
 
     /** @return array<int, CompletePackageInterface> */
     private function find(string... $packages): array {
-        $callback = static function (CompletePackageInterface $package) use ($packages): bool { return \in_array($package->getName(), $packages, true); };
-        return array_filter($this->composer->getRepositoryManager()->getLocalRepository()->getPackages(), $callback);
+        return array_filter(
+            array_filter(
+                $this->composer->getRepositoryManager()->getLocalRepository()->getPackages(),
+                static function (CompletePackageInterface $package) use ($packages): bool { return \in_array($package->getName(), $packages, true); }
+            ),
+            function (CompletePackageInterface $package): bool { return ! $this->whitelist->canUse($package); }
+        );
     }
 
     public function checkManifest()
