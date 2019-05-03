@@ -1,10 +1,10 @@
 # production-dependencies-guard
 
 Prevents development packages from being added into `require` and getting into production environment. In practical field 
-prevents e.g. debug tool-bars deployment into production environments (and similar cases).
+prevents e.g. debug tool-bars deployment into production environments.
 
-Additionally, you can configure the guard to decline packages with missing license, abandoned or mentioning `debug` in description
-and analyze packages on basis of composer.lock (more precise analysis).
+Additionally, you can configure the guard to decline packages with missing/unfit license, abandoned or mentioning `debug` 
+in description and analyze packages on basis of composer.lock (deeper analysis).
 
 # Installation
 
@@ -12,7 +12,7 @@ and analyze packages on basis of composer.lock (more precise analysis).
 
 # Configuration
 
-Additional guard checks can enabled in composer.json file:
+Additional guard checks can be enabled in the top-level composer.json file:
 ```
 {
     "name": "...",
@@ -36,16 +36,16 @@ Additional guard checks can enabled in composer.json file:
 
 - `white-list:...` adds a package to white-list, so it's not getting reported in spite of violations
 - `check-lock-file` uses composer.lock instead of composer.json, allowing deeper dependencies analysis
-- `check-description` enables description and keywords analysis, allowing to detect custom dev-packages (should contain `debug` in keywords)
-- `check-abandoned` enables abandoned packages checking (should not be used)
-- `check-license` enables license checking (should be specified)
+- `check-description` enables description and keywords analysis (searches `debug`), allowing to detect custom dev-packages
+- `check-abandoned` enables abandoned packages checking
+- `check-license` enables license checking (packages must provide license information)
 - `accept-license:...` specifies which licenses should be accepted (if the setting omitted, any license incl. proprietary)
 
 # Usage
 
 When the package is added to require-dev section of your `composer.json` file (`"kalessil/production-dependencies-guard": "dev-master"`),
-it'll **prevent adding dev-packages into `require` section**. Since dev-packages has no security guaranties, this also 
-improves your application security.
+it'll **prevent adding dev-packages into `require` section**. Since dev-packages has no security guaranties 
+(not intended for production use, only development purposes), this also improves your application security.
 
 ```
 composer require --dev kalessil/production-dependencies-guard:dev-master
