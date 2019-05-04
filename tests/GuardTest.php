@@ -96,7 +96,7 @@ final class GuardTest extends TestCase
         });
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp('/violations.+ phpunit\/phpunit: dev-package-name, dev-package-type, missing-license, abandoned, description-keywords\s*$/ims');
+        $this->expectExceptionMessageRegExp('/violations.+ phpunit\/phpunit: dev-package-name, dev-package-type, license, abandoned, description-keywords\s*$/ims');
 
         putenv(sprintf('COMPOSER=%s/data/activate-additional-features.json', __DIR__));
         $component = new Guard();
