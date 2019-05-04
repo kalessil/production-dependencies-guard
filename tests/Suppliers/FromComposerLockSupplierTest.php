@@ -9,7 +9,9 @@ final class FromComposerLockSupplierTest extends TestCase
     /** @covers \Kalessil\Composer\Plugins\ProductionDependenciesGuard\Suppliers\FromComposerLockSupplier::<public> */
     public function testComponent() {
         putenv(sprintf('COMPOSER=%s/../data/composer.json', __DIR__));
-        $this->assertSame(['kalessil/production-dependencies-guard-lock'], (new FromComposerLockSupplier())->packages());
+        $component= new FromComposerLockSupplier();
+        $this->assertSame(['kalessil/production-dependencies-guard-lock'], $component->packages());
+        $this->assertSame(['kalessil/production-dependencies-guard-lock'], $component->why('phpunit/phpunit'));
         putenv('COMPOSER=');
     }
 }

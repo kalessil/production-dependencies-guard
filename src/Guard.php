@@ -17,6 +17,7 @@ use Kalessil\Composer\Plugins\ProductionDependenciesGuard\Inspectors\ByPackageTy
 use Kalessil\Composer\Plugins\ProductionDependenciesGuard\Inspectors\StubInspector;
 use Kalessil\Composer\Plugins\ProductionDependenciesGuard\Suppliers\FromComposerLockSupplier;
 use Kalessil\Composer\Plugins\ProductionDependenciesGuard\Suppliers\FromComposerManifestSupplier;
+use Kalessil\Composer\Plugins\ProductionDependenciesGuard\Suppliers\SupplierInterface as SupplierContract;
 
 final class Guard implements ComposerPluginContract, EventSubscriberContract
 {
@@ -58,21 +59,21 @@ final class Guard implements ComposerPluginContract, EventSubscriberContract
     public static function getSubscribedEvents(): array
     {
         return array(
-            ScriptEvents::PRE_INSTALL_CMD  => ['checkManifest'],
-            ScriptEvents::PRE_UPDATE_CMD   => ['checkManifest'],
             ScriptEvents::POST_INSTALL_CMD => ['checkGeneric'],
             ScriptEvents::POST_UPDATE_CMD  => ['checkGeneric'],
         );
     }
 
-    private function check(CompletePackageInterface... $packages)
+    private function check(SupplierContract $supplier, CompletePackageInterface... $packages)
     {
         $violations = [];
         foreach ($packages as $package) {
-            $violations[$packageName = $package->getName()] = [];
+            $packageName            = strtolower($package->getName());
+            $packageId              = sprintf('%s (via %s)', $packageName, implode(', ', $supplier->why($packageName)));
+            $violations[$packageId] = [];
             foreach ($this->inspectors as $rule => $inspector) {
                 if (! $inspector->canUse($package)) {
-                    $violations[$packageName] []= $rule;
+                    $violations[$packageId] []= $rule;
                 }
             }
         }
@@ -93,21 +94,15 @@ final class Guard implements ComposerPluginContract, EventSubscriberContract
         return array_filter(
             array_filter(
                 $this->composer->getRepositoryManager()->getLocalRepository()->getPackages(),
-                static function (CompletePackageInterface $package) use ($packages): bool { return \in_array($package->getName(), $packages, true); }
+                static function (CompletePackageInterface $package) use ($packages): bool { return \in_array(strtolower($package->getName()), $packages, true); }
             ),
             function (CompletePackageInterface $package): bool { return ! $this->whitelist->canUse($package); }
         );
     }
 
-    public function checkManifest()
-    {
-        $supplier = new FromComposerManifestSupplier();
-        $this->check(...$this->find(...$supplier->packages()));
-    }
-
     public function checkGeneric()
     {
         $supplier = $this->useLockFile ? new FromComposerLockSupplier() : new FromComposerManifestSupplier();
-        $this->check(...$this->find(...$supplier->packages()));
+        $this->check($supplier, ...$this->find(...$supplier->packages()));
     }
 }

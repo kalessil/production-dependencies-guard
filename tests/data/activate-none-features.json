@@ -1,4 +1,6 @@
 {
+    "name": "package/generic",
+
     "require": {
         "phpunit/phpunit":   "*",
         "kalessil/kalessil": "*"

@@ -29,8 +29,6 @@ final class ByPackageNameInspector implements InspectorContract
 
         /* Frameworks components and tooling */
         'symfony/phpunit-bridge',
-        'symfony/debug',
-        'symfony/var-dumper',
         'symfony/maker-bundle',
         'zendframework/zend-test',
         'zendframework/zend-debug',
@@ -83,11 +81,11 @@ final class ByPackageNameInspector implements InspectorContract
 
     private function contains(string $dependency): bool
     {
-        return \in_array(strtolower($dependency), self::$packages, true);
+        return \in_array($dependency, self::$packages, true);
     }
 
     public function canUse(CompletePackageInterface $package): bool
     {
-        return ! $this->contains($packageName = $package->getName()) && ! $this->containsByVendor($packageName);
+        return ! $this->contains($packageName = strtolower($package->getName())) && ! $this->containsByVendor($packageName);
     }
 }

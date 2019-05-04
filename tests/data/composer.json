@@ -1,5 +1,7 @@
 {
+    "name": "PACKAGE/FROM-MANIFEST",
+
     "require": {
-        "kalessil/production-dependencies-guard-manifest": "*"
+        "KALESSIL/PRODUCTION-DEPENDENCIES-GUARD-MANIFEST": "*"
     }
 }

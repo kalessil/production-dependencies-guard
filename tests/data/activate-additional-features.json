@@ -1,4 +1,6 @@
 {
+    "name": "package/featured",
+
     "require": {
         "phpunit/phpunit":   "*",
         "kalessil/kalessil": "*"

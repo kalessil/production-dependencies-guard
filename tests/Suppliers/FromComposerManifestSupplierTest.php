@@ -9,7 +9,9 @@ final class FromComposerManifestSupplierTest extends TestCase
     /** @covers \Kalessil\Composer\Plugins\ProductionDependenciesGuard\Suppliers\FromComposerManifestSupplier::<public> */
     public function testComponent() {
         putenv(sprintf('COMPOSER=%s/../data/composer.json', __DIR__));
-        $this->assertSame(['kalessil/production-dependencies-guard-manifest'], (new FromComposerManifestSupplier())->packages());
+        $component = new FromComposerManifestSupplier();
+        $this->assertSame(['kalessil/production-dependencies-guard-manifest'], $component->packages());
+        $this->assertSame(['manifest'], $component->why('...'));
         putenv('COMPOSER=');
     }
 }

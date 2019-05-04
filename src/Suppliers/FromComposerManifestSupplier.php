@@ -10,6 +10,11 @@ final class FromComposerManifestSupplier implements SuplierContract
     public function packages(): array
     {
         $manifest = json_decode(file_get_contents(Factory::getComposerFile()), true);
-        return array_keys($manifest['require'] ?? []);
+        return array_map('strtolower', array_keys($manifest['require'] ?? []));
+    }
+
+    public function why(string $package): array
+    {
+        return ['manifest'];
     }
 }

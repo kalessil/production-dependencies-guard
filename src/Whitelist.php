@@ -19,6 +19,8 @@ final class Whitelist implements InspectorContract
                 static function (string $setting): bool { return strncmp($setting, 'white-list:', 11) === 0; }
             )
         );
+        /* whitelisting reason: see https://github.com/symfony/symfony/issues/31379 */
+        array_push($this->whitelist, 'symfony/debug', 'symfony/var-dumper');
     }
 
     public function canUse(CompletePackageInterface $package): bool

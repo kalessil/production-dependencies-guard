@@ -6,4 +6,7 @@ interface SupplierInterface
 {
     /** @return array<int, string> */
     public function packages(): array;
+
+    /** @return array<int, string> */
+    public function why(string $package): array;
 }
