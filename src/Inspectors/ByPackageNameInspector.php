@@ -18,6 +18,8 @@ final class ByPackageNameInspector implements InspectorContract
     private static $packages = [
         'kalessil/production-dependencies-guard',
         'roave/security-advisories',
+        'sensiolabs/security-checker',
+        'mediact/dependency-guard',
 
         /* PhpUnit-extensions and tooling */
         'johnkary/phpunit-speedtrap',
