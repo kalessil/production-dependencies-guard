@@ -64,6 +64,7 @@ final class ByPackageNameInspector implements InspectorContract
         'wp-coding-standards/wpcs',
         'phpcompatibility/php-compatibility',
         'consistence/coding-standard',
+        'sylius-labs/coding-standard',
         'phpmd/phpmd',
         'pdepend/pdepend',
         'sebastian/phpcpd',
