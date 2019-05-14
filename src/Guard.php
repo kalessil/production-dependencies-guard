@@ -34,6 +34,8 @@ final class Guard implements ComposerPluginContract, EventSubscriberContract
     private $inspectors;
     /** @var Whitelist */
     private $whitelist;
+    /** @var SupplierContract */
+    private $supplier;
 
     public function activate(Composer $composer, IOInterface $io)
     {
@@ -54,6 +56,7 @@ final class Guard implements ComposerPluginContract, EventSubscriberContract
         $this->composer    = $composer;
         $this->whitelist   = new Whitelist($settings);
         $this->useLockFile = \in_array(self::CHECK_LOCK_FILE, $settings, true);
+        $this->supplier    = $this->useLockFile ? new FromComposerLockSupplier() : new FromComposerManifestSupplier();
     }
 
     public static function getSubscribedEvents(): array
@@ -102,7 +105,6 @@ final class Guard implements ComposerPluginContract, EventSubscriberContract
 
     public function checkGeneric()
     {
-        $supplier = $this->useLockFile ? new FromComposerLockSupplier() : new FromComposerManifestSupplier();
-        $this->check($supplier, ...$this->find(...$supplier->packages()));
+        $this->check($this->supplier, ...$this->find(...$this->supplier->packages()));
     }
 }
