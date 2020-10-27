@@ -67,4 +67,28 @@ final class GuardTest extends TestCase
         $component->activate($composer, $this->createMock(IOInterface::class));
         $component->checkGeneric();
     }
+    /**
+     * @covers \Kalessil\Composer\Plugins\ProductionDependenciesGuard\Guard::<public>
+     */
+    public function testDeactivate() {
+        $composer = $this->getMockBuilder(Composer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $composer->expects($this->never())->method($this->anything());
+
+        $component = new Guard();
+        $component->deactivate($composer, $this->createMock(IOInterface::class));
+    }
+    /**
+     * @covers \Kalessil\Composer\Plugins\ProductionDependenciesGuard\Guard::<public>
+     */
+    public function testUninstall() {
+        $composer = $this->getMockBuilder(Composer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $composer->expects($this->never())->method($this->anything());
+
+        $component = new Guard();
+        $component->uninstall($composer, $this->createMock(IOInterface::class));
+    }
 }
