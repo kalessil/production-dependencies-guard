@@ -107,4 +107,12 @@ final class Guard implements ComposerPluginContract, EventSubscriberContract
     {
         $this->check($this->supplier, ...$this->find(...$this->supplier->packages()));
     }
+
+    public function deactivate(Composer $composer, IOInterface $io)
+    {
+    }
+
+    public function uninstall(Composer $composer, IOInterface $io)
+    {
+    }
 }
