@@ -2,11 +2,21 @@
     "name": "package/featured",
 
     "require": {
-        "phpunit/phpunit":   "*",
-        "kalessil/kalessil": "*"
+        "phpunit/phpunit":    "*",
+        "kalessil/kalessil":  "*",
+        "symfony/var-dumper": "*",
+        "vendor/abandoned":   "*",
+        "vendor/debug":       "*",
+        "vendor/guards":      "*"
     },
 
     "extra": {
-        "production-dependencies-guard": ["check-description", "check-license", "check-abandoned"]
+        "production-dependencies-guard": [
+            "check-description",
+            "check-license",
+            "check-abandoned",
+            "accept-license:MIT",
+            "package-guards:vendor/guards:license"
+        ]
     }
 }

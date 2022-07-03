@@ -10,16 +10,19 @@
             "role":  "maintainer"
     }],
     "require": {
-        "php":                            "^7.0|^8.0",
-        "ext-json":                       "*",
-        "composer-plugin-api":            "^1.0|^2.0"
+        "php":                 ">=7.0",
+        "ext-json":            "*",
+        "composer-plugin-api": "^1.0|^2.0"
     },
     "require-dev": {
-        "ext-xdebug":                     "*",
-        "composer/composer":              "^1.0|^2.0",
-        "phpunit/phpunit":                "^6.5",
-        "infection/infection":            "^0.9",
-        "rregeer/phpunit-coverage-check": "^0.1"
+        "ext-xdebug":                                     "*",
+        "composer/composer":                              "^1.0|^2.0",
+        "phpunit/phpunit":                                "^9.5",
+        "infection/infection":                            "^0.26",
+        "rregeer/phpunit-coverage-check":                 "^0.3",
+        "squizlabs/php_codesniffer":                      "^3.7",
+        "phpcompatibility/php-compatibility":             "^9.3",
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2"
     },
     "autoload": {
         "psr-4": {
@@ -36,9 +39,16 @@
     },
     "scripts": {
         "test": [
-            "./vendor/bin/phpunit --coverage-html ./build --coverage-clover ./build/phpunit.clover.xml",
+            "XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-html ./build --coverage-clover ./build/phpunit.clover.xml",
             "./vendor/bin/coverage-check ./build/phpunit.clover.xml 100",
-            "./vendor/bin/infection --only-covered --min-msi=100 --quiet"
+            "./vendor/bin/infection --min-msi=100 --quiet",
+            "./vendor/bin/phpcs --standard=PHPCompatibility --extensions=php --ignore=./vendor,./tests --runtime-set testVersion 7.0- ."
         ]
+    },
+    "config": {
+        "allow-plugins": {
+            "infection/extension-installer": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }

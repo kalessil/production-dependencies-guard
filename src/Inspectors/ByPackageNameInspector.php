@@ -49,7 +49,7 @@ final class ByPackageNameInspector implements InspectorContract
         'humbug/humbug',
         'infection/infection',
         'mockery/mockery',
-        'mikey179/vfsStream',
+        'mikey179/vfsstream',
         'phing/phing',
 
         /* SCA and code quality tools */

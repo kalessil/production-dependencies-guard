@@ -6,8 +6,8 @@ use PHPUnit\Framework\TestCase;
 
 final class FromComposerManifestSupplierTest extends TestCase
 {
-    /** @covers \Kalessil\Composer\Plugins\ProductionDependenciesGuard\Suppliers\FromComposerManifestSupplier::<public> */
-    public function testComponent() {
+    public function testComponent(): void
+    {
         putenv(sprintf('COMPOSER=%s/../data/composer.json', __DIR__));
         $component = new FromComposerManifestSupplier();
         $this->assertSame(['kalessil/production-dependencies-guard-manifest'], $component->packages());

@@ -7,8 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 final class ByPackageAbandonedInspectorTest extends TestCase
 {
-    /** @covers \Kalessil\Composer\Plugins\ProductionDependenciesGuard\Inspectors\ByPackageAbandonedInspector::<public> */
-    public function testComponent()
+    public function testComponent(): void
     {
         $mock = $this->createMock(PackageContract::class);
         $mock->expects($this->atLeastOnce())->method('isAbandoned')->willReturn(true, false);

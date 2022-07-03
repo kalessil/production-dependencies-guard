@@ -10,17 +10,9 @@ final class Whitelist implements InspectorContract
     /** @var array<int,string> */
     private $whitelist;
 
-    public function __construct(array $settings)
+    public function __construct(array $whitelist)
     {
-        $this->whitelist = array_map(
-            static function (string $setting): string { return str_replace('white-list:', '', $setting); },
-            array_filter(
-                array_map('strtolower', array_map('trim', $settings)),
-                static function (string $setting): bool { return strncmp($setting, 'white-list:', 11) === 0; }
-            )
-        );
-        /* whitelisting reason: see https://github.com/symfony/symfony/issues/31379 */
-        array_push($this->whitelist, 'symfony/debug', 'symfony/var-dumper');
+        $this->whitelist = $whitelist;
     }
 
     public function canUse(CompletePackageInterface $package): bool

@@ -7,14 +7,15 @@ use PHPUnit\Framework\TestCase;
 
 final class ByPackageDescriptionInspectorTest extends TestCase
 {
-    /**
-     * @covers \Kalessil\Composer\Plugins\ProductionDependenciesGuard\Inspectors\ByPackageDescriptionInspector::<public>
-     * @covers \Kalessil\Composer\Plugins\ProductionDependenciesGuard\Inspectors\ByPackageDescriptionInspector::<private>
-     */
-    public function testWithKeywords()
+    public function testWithKeywords(): void
     {
         $mock = $this->createMock(PackageContract::class);
-        $mock->expects($this->atLeastOnce())->method('getKeywords')->willReturn([], ['keyword'], ['debug'], ['DEBUG']);
+        $mock->expects($this->atLeastOnce())->method('getKeywords')->willReturn(
+            [],
+            ['keyword'],
+            ['debug'],
+            ['DEBUG']
+        );
 
         $component = new ByPackageDescriptionInspector();
         $this->assertTrue($component->canUse($mock));
@@ -23,14 +24,10 @@ final class ByPackageDescriptionInspectorTest extends TestCase
         $this->assertFalse($component->canUse($mock));
     }
 
-    /**
-     * @covers \Kalessil\Composer\Plugins\ProductionDependenciesGuard\Inspectors\ByPackageDescriptionInspector::<public>
-     * @covers \Kalessil\Composer\Plugins\ProductionDependenciesGuard\Inspectors\ByPackageDescriptionInspector::<private>
-     */
-    public function testWithDescription()
+    public function testWithDescription(): void
     {
         $mock = $this->createMock(PackageContract::class);
-        $mock->expects($this->atLeastOnce())->method('getDescription')->willReturn(...[
+        $mock->expects($this->atLeastOnce())->method('getDescription')->willReturn(
             '',
             '...',
             ' debug ',
@@ -40,9 +37,10 @@ final class ByPackageDescriptionInspectorTest extends TestCase
             'static analyzer',
             'static code analyzer',
             'STATIC CODE ANALYZER',
-        ]);
+        );
 
         $component = new ByPackageDescriptionInspector();
+
         $this->assertTrue($component->canUse($mock));
         $this->assertTrue($component->canUse($mock));
         $this->assertFalse($component->canUse($mock));
@@ -52,5 +50,26 @@ final class ByPackageDescriptionInspectorTest extends TestCase
         $this->assertFalse($component->canUse($mock));
         $this->assertFalse($component->canUse($mock));
         $this->assertFalse($component->canUse($mock));
+    }
+
+    public function testIgnoredPackages(): void
+    {
+        $mock = $this->createMock(PackageContract::class);
+        $mock->expects($this->atLeastOnce())->method('getDescription')->willReturn('debug');
+        $mock->expects($this->atLeastOnce())->method('getName')->willReturn(
+            'vendor/package',
+            'symfony/DEBUG',
+            'symfony/debug',
+            'symfony/var-dumper',
+            'symfony/error-handler',
+        );
+
+        $component = new ByPackageDescriptionInspector();
+
+        $this->assertFalse($component->canUse($mock));
+        $this->assertTrue($component->canUse($mock));
+        $this->assertTrue($component->canUse($mock));
+        $this->assertTrue($component->canUse($mock));
+        $this->assertTrue($component->canUse($mock));
     }
 }

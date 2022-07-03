@@ -1,0 +1,26 @@
+{
+    "name": "package/featured",
+
+    "require": {
+        "phpunit/phpunit":    "*",
+        "kalessil/kalessil":  "*",
+        "symfony/var-dumper": "*",
+        "vendor/abandoned":   "*",
+        "vendor/debug":       "*"
+    },
+
+    "extra": {
+        "production-dependencies-guard": [
+            "check-Description",
+            "check-License ",
+            " check-abandoned ",
+            "check-lock-file",
+            "White-list: vendor/trim ",
+            "white-list:vendor/CaPiTaLiZaTiOn",
+            "accept-License: trim ",
+            "accept-license:CaPiTaLiZaTiOn",
+            "package-guards: vendor/package1:abandoned",
+            "package-guards:Vendor/Package2:description ,LiCense"
+        ]
+    }
+}

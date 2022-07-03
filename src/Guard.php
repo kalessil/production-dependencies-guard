@@ -4,7 +4,6 @@ namespace Kalessil\Composer\Plugins\ProductionDependenciesGuard;
 
 use Composer\Composer;
 use Composer\EventDispatcher\EventSubscriberInterface as EventSubscriberContract;
-use Composer\Factory;
 use Composer\IO\IOInterface;
 use Composer\Package\CompletePackageInterface;
 use Composer\Plugin\PluginInterface as ComposerPluginContract;
@@ -14,18 +13,13 @@ use Kalessil\Composer\Plugins\ProductionDependenciesGuard\Inspectors\ByPackageDe
 use Kalessil\Composer\Plugins\ProductionDependenciesGuard\Inspectors\ByPackageLicenseInspector;
 use Kalessil\Composer\Plugins\ProductionDependenciesGuard\Inspectors\ByPackageNameInspector;
 use Kalessil\Composer\Plugins\ProductionDependenciesGuard\Inspectors\ByPackageTypeInspector;
-use Kalessil\Composer\Plugins\ProductionDependenciesGuard\Inspectors\StubInspector;
+use Kalessil\Composer\Plugins\ProductionDependenciesGuard\Inspectors\InspectorInterface as InspectorContract;
 use Kalessil\Composer\Plugins\ProductionDependenciesGuard\Suppliers\FromComposerLockSupplier;
 use Kalessil\Composer\Plugins\ProductionDependenciesGuard\Suppliers\FromComposerManifestSupplier;
 use Kalessil\Composer\Plugins\ProductionDependenciesGuard\Suppliers\SupplierInterface as SupplierContract;
 
 final class Guard implements ComposerPluginContract, EventSubscriberContract
 {
-    const CHECK_LOCK_FILE    = 'check-lock-file';
-    const CHECK_DESCRIPTION  = 'check-description';
-    const CHECK_LICENSE      = 'check-license';
-    const CHECK_ABANDONED    = 'check-abandoned';
-
     /** @var bool */
     private $useLockFile;
     /** @var Composer */
@@ -36,26 +30,35 @@ final class Guard implements ComposerPluginContract, EventSubscriberContract
     private $whitelist;
     /** @var SupplierContract */
     private $supplier;
+    /** @var array<string, array<string>> */
+    private $packageInspectors;
 
     public function activate(Composer $composer, IOInterface $io)
     {
-        $manifest = json_decode(file_get_contents(Factory::getComposerFile()), true);
-        $settings = $manifest['extra']['production-dependencies-guard'] ?? [];
+        $settings = new Settings();
 
-        $checkLicense     = \in_array(self::CHECK_LICENSE,     $settings, true);
-        $checkAbandoned   = \in_array(self::CHECK_ABANDONED,   $settings, true);
-        $checkDescription = \in_array(self::CHECK_DESCRIPTION, $settings, true);
         $this->inspectors = [
-            'dev-package-name'     => new ByPackageNameInspector(),
-            'dev-package-type'     => new ByPackageTypeInspector(),
-            'license'              => $checkLicense     ? new ByPackageLicenseInspector($settings) : new StubInspector(),
-            'abandoned'            => $checkAbandoned   ? new ByPackageAbandonedInspector()        : new StubInspector(),
-            'description-keywords' => $checkDescription ? new ByPackageDescriptionInspector()      : new StubInspector(),
+            'dev-package-name' => new ByPackageNameInspector(),
+            'dev-package-type' => new ByPackageTypeInspector(),
         ];
 
+        if ($settings->checkLicense()) {
+            $this->inspectors['license'] = new ByPackageLicenseInspector($settings->acceptLicense());
+        }
+
+        if ($settings->checkAbandoned()) {
+            $this->inspectors['abandoned'] = new ByPackageAbandonedInspector();
+        }
+
+        if ($settings->checkDescription()) {
+            $this->inspectors['description'] = new ByPackageDescriptionInspector();
+        }
+
+        $this->packageInspectors = $settings->packageGuards();
+
         $this->composer    = $composer;
-        $this->whitelist   = new Whitelist($settings);
-        $this->useLockFile = \in_array(self::CHECK_LOCK_FILE, $settings, true);
+        $this->whitelist   = new Whitelist($settings->whiteList());
+        $this->useLockFile = $settings->checkLockFile();
         $this->supplier    = $this->useLockFile ? new FromComposerLockSupplier() : new FromComposerManifestSupplier();
     }
 
@@ -75,8 +78,10 @@ final class Guard implements ComposerPluginContract, EventSubscriberContract
             $packageId              = sprintf('%s (via %s)', $packageName, implode(', ', $supplier->why($packageName)));
             $violations[$packageId] = [];
             foreach ($this->inspectors as $rule => $inspector) {
-                if (! $inspector->canUse($package)) {
-                    $violations[$packageId] []= $rule;
+                if (! isset($this->packageInspectors[$packageName]) || in_array($rule, $this->packageInspectors[$packageName], true)) {
+                    if (! $inspector->canUse($package)) {
+                        $violations[$packageId][] = $rule;
+                    }
                 }
             }
         }
@@ -93,7 +98,8 @@ final class Guard implements ComposerPluginContract, EventSubscriberContract
     }
 
     /** @return array<int, CompletePackageInterface> */
-    private function find(string... $packages): array {
+    private function find(string ...$packages): array {
+        /* @infection-ignore-all */
         return array_filter(
             array_filter(
                 $this->composer->getRepositoryManager()->getLocalRepository()->getPackages(),

@@ -7,21 +7,19 @@ use PHPUnit\Framework\TestCase;
 
 final class ByPackageNameInspectorTest extends TestCase
 {
-    /**
-     * @covers \Kalessil\Composer\Plugins\ProductionDependenciesGuard\Inspectors\ByPackageNameInspector::<public>
-     * @covers \Kalessil\Composer\Plugins\ProductionDependenciesGuard\Inspectors\ByPackageNameInspector::<private>
-     */
-    public function testComponent()
+    public function testComponent(): void
     {
         $mock = $this->createMock(PackageContract::class);
         $mock->expects($this->atLeastOnce())->method('getName')->willReturn(...[
             '',
             'phpunit/phpunit',
-            'roave/security-advisories'
+            'roave/security-advisories',
+            'Roave/Security-Advisories',
         ]);
 
         $component = new ByPackageNameInspector();
         $this->assertTrue($component->canUse($mock));
+        $this->assertFalse($component->canUse($mock));
         $this->assertFalse($component->canUse($mock));
         $this->assertFalse($component->canUse($mock));
     }

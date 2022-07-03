@@ -1,0 +1,15 @@
+{
+    "name": "package/featured",
+
+    "require": {
+        "phpunit/phpunit":    "*",
+        "kalessil/kalessil":  "*"
+    },
+
+    "extra": {
+        "production-dependencies-guard": [
+            "white-list",
+            "white-list::"
+        ]
+    }
+}

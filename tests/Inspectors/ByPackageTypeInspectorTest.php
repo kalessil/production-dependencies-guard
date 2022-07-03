@@ -7,19 +7,20 @@ use PHPUnit\Framework\TestCase;
 
 final class ByPackageTypeInspectorTest extends TestCase
 {
-    /** @covers \Kalessil\Composer\Plugins\ProductionDependenciesGuard\Inspectors\ByPackageTypeInspector::<public> */
-    public function testComponent()
+    public function testComponent(): void
     {
         $mock = $this->createMock(PackageContract::class);
         $mock->expects($this->atLeastOnce())->method('getType')->willReturn(...[
             '',
             'library',
-            'phpcodesniffer-standard'
+            'phpcodesniffer-standard',
+            'PhpCodeSniffer-standard'
         ]);
 
         $component = new ByPackageTypeInspector();
         $this->assertTrue($component->canUse($mock));
         $this->assertTrue($component->canUse($mock));
+        $this->assertFalse($component->canUse($mock));
         $this->assertFalse($component->canUse($mock));
     }
 }

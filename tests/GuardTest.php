@@ -5,56 +5,96 @@ namespace Kalessil\Composer\Plugins\ProductionDependenciesGuard;
 use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Package\CompletePackageInterface;
+use Composer\Repository\InstalledRepositoryInterface;
+use Composer\Repository\RepositoryManager;
 use PHPUnit\Framework\TestCase;
 
 final class GuardTest extends TestCase
 {
-    /** @covers \Kalessil\Composer\Plugins\ProductionDependenciesGuard\Guard::<public> */
-    public function testSubscribedEvents() {
-        $this->assertCount(2, Guard::getSubscribedEvents());
+    public function testSubscribedEvents(): void
+    {
+        $this->assertSame([
+            'post-install-cmd' => ['checkGeneric'],
+            'post-update-cmd' => ['checkGeneric'],
+        ], Guard::getSubscribedEvents());
     }
 
-    /**
-     * @covers \Kalessil\Composer\Plugins\ProductionDependenciesGuard\Guard::<public>
-     * @covers \Kalessil\Composer\Plugins\ProductionDependenciesGuard\Guard::<private>
-     */
-    public function testGenericBehaviourReporting() {
+    public function testGenericBehaviourReporting(): void
+    {
         $composer = $this->getMockBuilder(Composer::class)
-            ->setMethods(['getRepositoryManager', 'getLocalRepository', 'getPackages'])
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getRepositoryManager'])
             ->getMock();
-        $composer->expects($this->atLeastOnce())->method('getRepositoryManager')->willReturn($composer);
-        $composer->expects($this->atLeastOnce())->method('getLocalRepository')->willReturn($composer);
-        $composer->expects($this->atLeastOnce())->method('getPackages')->willReturnCallback(function (): array {
+        $repositoryManager = $this->getMockBuilder(RepositoryManager::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getLocalRepository'])
+            ->getMock();
+        $installedRepository = $this->getMockBuilder(InstalledRepositoryInterface::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getPackages'])
+            ->getMockForAbstractClass();
+        $composer->expects($this->atLeastOnce())->method('getRepositoryManager')->willReturn($repositoryManager);
+        $repositoryManager->expects($this->atLeastOnce())->method('getLocalRepository')->willReturn($installedRepository);
+        $installedRepository->expects($this->atLeastOnce())->method('getPackages')->willReturnCallback(function (): array {
             $pass = $this->createMock(CompletePackageInterface::class);
             $pass->expects($this->atLeastOnce())->method('getName')->willReturn('kalessil/kalessil');
             $pass->expects($this->atLeastOnce())->method('getType')->willReturn('library');
 
             $decline = $this->createMock(CompletePackageInterface::class);
-            $decline->expects($this->atLeastOnce())->method('getName')->willReturn('phpunit/phpunit');
+            $decline->expects($this->atLeastOnce())->method('getName')->willReturn('PHPUnit/phpunit');
             $decline->expects($this->atLeastOnce())->method('getType')->willReturn('phpcodesniffer-standard');
 
-            return [$pass, $decline];
+            $abandoned = $this->createMock(CompletePackageInterface::class);
+            $abandoned->expects($this->atLeastOnce())->method('getName')->willReturn('vendor/abandoned');
+            $abandoned->expects($this->atLeastOnce())->method('getType')->willReturn('library');
+            $abandoned->expects($this->atLeastOnce())->method('isAbandoned')->willReturn(true);
+
+            $debug = $this->createMock(CompletePackageInterface::class);
+            $debug->expects($this->atLeastOnce())->method('getName')->willReturn('vendor/debug');
+            $debug->expects($this->atLeastOnce())->method('getType')->willReturn('library');
+            $debug->expects($this->atLeastOnce())->method('getDescription')->willReturn('debug');
+
+            $guards = $this->createMock(CompletePackageInterface::class);
+            $guards->expects($this->atLeastOnce())->method('getName')->willReturn('vendor/guards');
+            $guards->method('isAbandoned')->willReturn(true);
+            $guards->expects($this->atLeastOnce())->method('getLicense')->willReturn(['MIT']);
+
+            return [$pass, $decline, $abandoned, $debug, $guards];
         });
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp('/violations.+ phpunit\/phpunit \(via manifest\): dev-package-name, dev-package-type\s*$/ims');
+        $this->expectExceptionMessage(<<<'___EOM___'
+Dependencies guard has found violations in require-dependencies (source: manifest):
+ - kalessil/kalessil (via manifest): license
+ - phpunit/phpunit (via manifest): dev-package-name, dev-package-type, license
+ - vendor/abandoned (via manifest): license, abandoned
+ - vendor/debug (via manifest): license, description
+___EOM___
+        );
 
-        putenv(sprintf('COMPOSER=%s/data/activate-none-features.json', __DIR__));
+        putenv(sprintf('COMPOSER=%s/data/activate-additional-features.json', __DIR__));
         $component = new Guard();
         $component->activate($composer, $this->createMock(IOInterface::class));
         $component->checkGeneric();
     }
-    /**
-     * @covers \Kalessil\Composer\Plugins\ProductionDependenciesGuard\Guard::<public>
-     * @covers \Kalessil\Composer\Plugins\ProductionDependenciesGuard\Guard::<private>
-     */
-    public function testGenericBehaviourPassing() {
+
+    public function testGenericBehaviourPassing(): void
+    {
         $composer = $this->getMockBuilder(Composer::class)
-            ->setMethods(['getRepositoryManager', 'getLocalRepository', 'getPackages'])
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getRepositoryManager'])
             ->getMock();
-        $composer->expects($this->atLeastOnce())->method('getRepositoryManager')->willReturn($composer);
-        $composer->expects($this->atLeastOnce())->method('getLocalRepository')->willReturn($composer);
-        $composer->expects($this->atLeastOnce())->method('getPackages')->willReturnCallback(function (): array {
+        $repositoryManager = $this->getMockBuilder(RepositoryManager::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getLocalRepository'])
+            ->getMock();
+        $installedRepository = $this->getMockBuilder(InstalledRepositoryInterface::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getPackages'])
+            ->getMockForAbstractClass();
+        $composer->expects($this->atLeastOnce())->method('getRepositoryManager')->willReturn($repositoryManager);
+        $repositoryManager->expects($this->atLeastOnce())->method('getLocalRepository')->willReturn($installedRepository);
+        $installedRepository->expects($this->atLeastOnce())->method('getPackages')->willReturnCallback(function (): array {
             $pass = $this->createMock(CompletePackageInterface::class);
             $pass->expects($this->atLeastOnce())->method('getName')->willReturn('kalessil/kalessil');
             $pass->expects($this->atLeastOnce())->method('getType')->willReturn('library');
@@ -67,10 +107,9 @@ final class GuardTest extends TestCase
         $component->activate($composer, $this->createMock(IOInterface::class));
         $component->checkGeneric();
     }
-    /**
-     * @covers \Kalessil\Composer\Plugins\ProductionDependenciesGuard\Guard::<public>
-     */
-    public function testDeactivate() {
+
+    public function testDeactivate(): void
+    {
         $composer = $this->getMockBuilder(Composer::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -79,10 +118,9 @@ final class GuardTest extends TestCase
         $component = new Guard();
         $component->deactivate($composer, $this->createMock(IOInterface::class));
     }
-    /**
-     * @covers \Kalessil\Composer\Plugins\ProductionDependenciesGuard\Guard::<public>
-     */
-    public function testUninstall() {
+
+    public function testUninstall(): void
+    {
         $composer = $this->getMockBuilder(Composer::class)
             ->disableOriginalConstructor()
             ->getMock();

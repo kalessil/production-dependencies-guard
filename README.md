@@ -28,7 +28,9 @@ Additional guard checks can be enabled in the top-level composer.json file:
             "white-list:vendor/package-two",
             
             "accept-license:MIT",
-            "accept-license:proprietary"
+            "accept-license:proprietary",
+
+            "package-guards:vendor/package-three:abandoned,description"
         ]
     }
 }
@@ -40,6 +42,7 @@ Additional guard checks can be enabled in the top-level composer.json file:
 - `check-abandoned` enables abandoned packages checking
 - `check-license` enables license checking (packages must provide license information)
 - `accept-license:...` specifies which licenses should be accepted (if the setting omitted, any license incl. proprietary)
+- `package-guards:<package>:...` specifies the guards per package (comma separated list, guards: dev-package-name, dev-package-type, license*, abandoned*, description*). * = only available if enabled via the check-... option 
 
 # Usage
 

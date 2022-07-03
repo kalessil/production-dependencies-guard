@@ -7,6 +7,13 @@ use Kalessil\Composer\Plugins\ProductionDependenciesGuard\Inspectors\InspectorIn
 
 final class ByPackageDescriptionInspector implements InspectorContract
 {
+    /* ignore reason: see https://github.com/symfony/symfony/issues/31379 */
+    const IGNORE_PACKAGES = [
+        'symfony/debug',
+        'symfony/var-dumper',
+        'symfony/error-handler',
+    ];
+
     private function hasDebugKeyword(CompletePackageInterface $package): bool
     {
         $callback = static function (string $term): bool { return strtolower($term) === 'debug'; };
@@ -21,6 +28,10 @@ final class ByPackageDescriptionInspector implements InspectorContract
 
     public function canUse(CompletePackageInterface $package): bool
     {
+        if (true === in_array(strtolower($package->getName()), self::IGNORE_PACKAGES, true)) {
+            return true;
+        }
+
         return ! $this->hasDebugKeyword($package) && ! $this->hasAnalyzerDescription($package);
     }
 }

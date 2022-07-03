@@ -7,24 +7,48 @@ use PHPUnit\Framework\TestCase;
 
 final class ByPackageLicenseInspectorTest extends TestCase
 {
-    /** @covers \Kalessil\Composer\Plugins\ProductionDependenciesGuard\Inspectors\ByPackageLicenseInspector::<public> */
-    public function testComponent()
+    public function testComponentWithAcceptedLicenses(): void
     {
         $mock = $this->createMock(PackageContract::class);
-        $mock->expects($this->atLeastOnce())->method('getLicense')->willReturn(...[
-            '',
+        $mock->expects($this->atLeastOnce())->method('getLicense')->willReturn(
+            [''],
             [],
-            'MIT',
+            ['MIT '],
+            ['MIT'],
+            ['Apache'],
             ['mit', 'apache'],
             ['mit', 'proprietary', 'apache'],
+            ['gpl', 'proprietary']
+        );
+
+        $component = new ByPackageLicenseInspector([
+            'mit',
+            'apache',
         ]);
 
-        $component = new ByPackageLicenseInspector(['accept-license:mit', 'accept-license:apache']);
+        $this->assertFalse($component->canUse($mock));
+        $this->assertFalse($component->canUse($mock));
+        $this->assertTrue($component->canUse($mock));
+        $this->assertTrue($component->canUse($mock));
+        $this->assertTrue($component->canUse($mock));
+        $this->assertTrue($component->canUse($mock));
+        $this->assertTrue($component->canUse($mock));
+        $this->assertFalse($component->canUse($mock));
+    }
 
-        $this->assertFalse($component->canUse($mock));
+    public function testComponentWithoutAcceptedLicenses(): void
+    {
+        $mock = $this->createMock(PackageContract::class);
+        $mock->expects($this->atLeastOnce())->method('getLicense')->willReturn(
+            [''],
+            [],
+            ['MIT'],
+        );
+
+        $component = new ByPackageLicenseInspector([]);
+
+        $this->assertTrue($component->canUse($mock));
         $this->assertFalse($component->canUse($mock));
         $this->assertTrue($component->canUse($mock));
-        $this->assertTrue($component->canUse($mock));
-        $this->assertFalse($component->canUse($mock));
     }
 }
